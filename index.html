@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Elzette Fourie - Interactive Digital Resume</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #6a4c93;
+      --secondary: #b37ba4;
+      --accent: #ff9f1c;
+      --background-light: #f4eaff;
+      --background-dark: #1a1a2e;
+      --text-light: #333;
+      --text-dark: #f4f4f4;
+      --card-bg-light: #ffffffcc;
+      --card-bg-dark: #16213e;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: auto;
+      max-width: 1000px;
+      padding: 20px;
+      background-color: var(--background-light);
+      color: var(--text-light);
+      transition: all 0.5s ease;
+      line-height: 1.6;
+    }
+
+    body.dark-mode {
+      background-color: var(--background-dark);
+      color: var(--text-dark);
+    }
+
+    h1, h2, h3 {
+      color: var(--primary);
+      margin-top: 0;
+    }
+
+    body.dark-mode h1, 
+    body.dark-mode h2,
+    body.dark-mode h3 {
+      color: var(--secondary);
+    }
+
+    .section {
+      background: var(--card-bg-light);
+      padding: 25px;
+      margin-bottom: 25px;
+      border-radius: 15px;
+      box-shadow: var(--shadow);
+      transition: all 0.5s ease;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    body.dark-mode .section {
+      background: var(--card-bg-dark);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    ul {
+      padding-left: 20px;
+    }
+
+    li {
+      margin-bottom: 10px;
+      position: relative;
+    }
+
+    li::before {
+      content: "▹";
+      position: absolute;
+      left: -20px;
+      color: var(--primary);
+    }
+
+    body.dark-mode li::before {
+      color: var(--accent);
+    }
+
+    .profile-pic {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      float: right;
+      margin-left: 30px;
+      object-fit: cover;
+      border: 5px solid var(--primary);
+      box-shadow: 0 0 20px rgba(106, 76, 147, 0.3);
+      transition: all 0.5s ease;
+      cursor: pointer;
+    }
+
+    body.dark-mode .profile-pic {
+      border-color: var(--secondary);
+      box-shadow: 0 0 20px rgba(179, 123, 164, 0.3);
+    }
+
+    .profile-pic:hover {
+      transform: rotate(5deg) scale(1.05);
+    }
+
+    .tabs {
+      margin-top: 20px;
+    }
+
+    .tab-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+      gap: 8px;
+    }
+
+    .tab-button {
+      padding: 10px 20px;
+      border: none;
+      background-color: var(--primary);
+      color: white;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      font-weight: bold;
+    }
+
+    .tab-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(106, 76, 147, 0.4);
+    }
+
+    .tab-button.active {
+      background-color: var(--secondary);
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(179, 123, 164, 0.4);
+    }
+
+    .tab-content {
+      display: none;
+      background-color: #1e1e3f;
+      color: #f1f1f1;
+      padding: 20px;
+      border-radius: 10px;
+      font-family: 'Courier New', monospace;
+      overflow-x: auto;
+      border-left: 5px solid var(--accent);
+    }
+
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    a:hover {
+      color: var(--secondary);
+    }
+
+    a::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      bottom: -2px;
+      left: 0;
+      background-color: var(--secondary);
+      transform: scaleX(0);
+      transform-origin: bottom right;
+      transition: transform 0.3s ease;
+    }
+
+    a:hover::after {
+      transform: scaleX(1);
+      transform-origin: bottom left;
+    }
+
+    body.dark-mode a {
+      color: var(--accent);
+    }
+
+    .mode-toggle {
+      text-align: right;
+      margin-bottom: 20px;
+    }
+
+    .mode-toggle button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mode-toggle button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(106, 76, 147, 0.4);
+    }
+
+    body.dark-mode .mode-toggle button {
+      background-color: var(--secondary);
+    }
+
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+    }
+
+    .skills-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .skill-chip {
+      background-color: var(--primary);
+      color: white;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    body.dark-mode .skill-chip {
+      background-color: var(--secondary);
+    }
+
+    .skill-chip:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(106, 76, 147, 0.4);
+    }
+
+    .progress-container {
+      width: 100%;
+      background-color: #e0e0e0;
+      border-radius: 10px;
+      margin: 15px 0;
+      overflow: hidden;
+    }
+
+    body.dark-mode .progress-container {
+      background-color: #2d2d44;
+    }
+
+    .progress-bar {
+      height: 10px;
+      background-color: var(--primary);
+      border-radius: 10px;
+      width: 0;
+      transition: width 1.5s ease;
+    }
+
+    body.dark-mode .progress-bar {
+      background-color: var(--accent);
+    }
+
+    .experience-item {
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 1px dashed #ccc;
+      position: relative;
+    }
+
+    .experience-item:last-child {
+      border-bottom: none;
+    }
+
+    .experience-item::before {
+      content: '';
+      position: absolute;
+      left: -25px;
+      top: 5px;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background-color: var(--primary);
+    }
+
+    body.dark-mode .experience-item::before {
+      background-color: var(--accent);
+    }
+
+    .contact-icons {
+      display: flex;
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .contact-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .contact-icon:hover {
+      transform: translateY(-5px) scale(1.1);
+      background-color: var(--secondary);
+    }
+
+    body.dark-mode .contact-icon {
+      background-color: var(--accent);
+    }
+
+    .achievement-badge {
+      display: inline-block;
+      background-color: var(--primary);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      margin-right: 8px;
+      margin-bottom: 8px;
+      font-size: 0.8rem;
+      transition: all 0.3s ease;
+    }
+
+    .achievement-badge:hover {
+      transform: scale(1.1);
+      background-color: var(--secondary);
+    }
+
+    body.dark-mode .achievement-badge {
+      background-color: var(--accent);
+    }
+
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      cursor: help;
+    }
+
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 200px;
+      background-color: var(--primary);
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .floating-action-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 4px 15px rgba(106, 76, 147, 0.4);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 100;
+    }
+
+    .floating-action-btn:hover {
+      transform: scale(1.1) rotate(15deg);
+      background-color: var(--secondary);
+    }
+
+    body.dark-mode .floating-action-btn {
+      background-color: var(--accent);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .typing-effect {
+      border-right: 3px solid var(--primary);
+      white-space: nowrap;
+      overflow: hidden;
+      display: inline-block;
+    }
+
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 100% }
+    }
+
+    @keyframes blink-caret {
+      from, to { border-color: transparent }
+      50% { border-color: var(--primary) }
+    }
+
+    body.dark-mode .typing-effect {
+      border-right-color: var(--accent);
+    }
+
+    .animate-section {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    @media (max-width: 768px) {
+      .profile-pic {
+        float: none;
+        display: block;
+        margin: 0 auto 20px;
+      }
+      
+      .tab-buttons {
+        justify-content: center;
+      }
+      
+      .section {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="mode-toggle">
+    <button onclick="toggleMode()">
+      <i class="fas fa-moon"></i> Toggle Theme
+    </button>
+  </div>
+
+  <header class="section">
+    <img src="https://via.placeholder.com/150" alt="Elzette Fourie" class="profile-pic" id="profilePic" />
+    <h1 id="typing-title"></h1>
+    <p><strong><span class="typing-effect" id="typing-subtitle"></span></strong></p>
+    <p><i class="fas fa-map-marker-alt"></i> <strong>Address:</strong> 27 Eland Street, Potchefstroom, 2531, North West Province</p>
+    <p><i class="fas fa-phone"></i> <strong>Phone:</strong> <a href="tel:+27719752617">071 975 2617</a></p>
+    <p><i class="fas fa-envelope"></i> <strong>Email:</strong> <a href="mailto:chessqueenelzette@gmail.com">chessqueenelzette@gmail.com</a></p>
+    
+    <div class="contact-icons">
+      <a href="#" class="contact-icon" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+      <a href="#" class="contact-icon" title="GitHub"><i class="fab fa-github"></i></a>
+      <a href="#" class="contact-icon" title="Twitter"><i class="fab fa-twitter"></i></a>
+      <a href="#" class="contact-icon" title="Download CV"><i class="fas fa-file-download"></i></a>
+    </div>
+  </header>
+
+  <section class="section">
+    <h2><i class="fas fa-user-tie"></i> Professional Summary</h2>
+    <p>Ambitious Information Technology student currently completing a BSc in IT and pursuing real-world experience to develop acquired skills. Proficient in Delphi, basic HTML, C++, C# (applications and web), and Python. Strong programming and problem-solving skills. Eager to learn new processes, programs, and procedures quickly to maximize contributions to users, teams, and business success.</p>
+    
+    <div class="skills-container">
+      <div class="skill-chip"><i class="fas fa-code"></i> Problem Solving</div>
+      <div class="skill-chip"><i class="fas fa-laptop-code"></i> Programming</div>
+      <div class="skill-chip"><i class="fas fa-chess"></i> Strategic Thinking</div>
+      <div class="skill-chip"><i class="fas fa-users"></i> Teamwork</div>
+      <div class="skill-chip"><i class="fas fa-bolt"></i> Fast Learner</div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2><i class="fas fa-code"></i> Technical Skills</h2>
+    
+    <h3>Programming Languages</h3>
+    <div class="progress-container">
+      <div class="progress-bar" data-width="85%"></div>
+    </div>
+    
+    <div class="tabs">
+      <div class="tab-buttons">
+        <button class="tab-button active" data-target="python"><i class="fab fa-python"></i> Python</button>
+        <button class="tab-button" data-target="html"><i class="fab fa-html5"></i> HTML/CSS</button>
+        <button class="tab-button" data-target="java"><i class="fab fa-java"></i> Java</button>
+        <button class="tab-button" data-target="csharp"><i class="fas fa-code"></i> C#</button>
+        <button class="tab-button" data-target="cpp"><i class="fas fa-file-code"></i> C++</button>
+      </div>
+
+      <div id="python" class="tab-content active">
+<pre><span style="color: #6a9955;"># Python implementation of Fibonacci sequence</span>
+<span style="color: #569cd6;">def</span> <span style="color: #dcdcaa;">fibonacci</span>(n):
+    <span style="color: #569cd6;">if</span> n <= 1:
+        <span style="color: #569cd6;">return</span> n
+    <span style="color: #569cd6;">else</span>:
+        <span style="color: #569cd6;">return</span> (fibonacci(n-1) + fibonacci(n-2))
+
+<span style="color: #569cd6;">for</span> i <span style="color: #569cd6;">in</span> <span style="color: #dcdcaa;">range</span>(10):
+    <span style="color: #dcdcaa;">print</span>(fibonacci(i))</pre>
+      </div>
+
+      <div id="html" class="tab-content">
+<pre><span style="color: #808080;">&lt;!-- Interactive button with animation --&gt;</span>
+&lt;<span style="color: #569cd6;">button</span> <span style="color: #9cdcfe;">class</span>=<span style="color: #ce9178;">"cool-btn"</span> 
+        <span style="color: #9cdcfe;">onclick</span>=<span style="color: #ce9178;">"alert('Hello World!')"</span>&gt;
+  Click Me &lt;<span style="color: #569cd6;">i</span> <span style="color: #9cdcfe;">class</span>=<span style="color: #ce9178;">"fas fa-hand-pointer"</span>&gt;&lt;/<span style="color: #569cd6;">i</span>&gt;
+&lt;/<span style="color: #569cd6;">button</span>&gt;
+
+<span style="color: #808080;">&lt;!-- CSS for the button --&gt;</span>
+&lt;<span style="color: #569cd6;">style</span>&gt;
+  .cool-btn {
+    transition: all 0.3s ease;
+    background: linear-gradient(45deg, #6a4c93, #b37ba4);
+  }
+  .cool-btn:hover {
+    transform: translateY(-3px);
+  }
+&lt;/<span style="color: #569cd6;">style</span>&gt;</pre>
+      </div>
+
+      <div id="java" class="tab-content">
+<pre><span style="color: #6a9955;">// Java implementation of a simple calculator</span>
+<span style="color: #569cd6;">public class</span> <span style="color: #4ec9b0;">Calculator</span> {
+    <span style="color: #569cd6;">public static</span> <span style="color: #569cd6;">void</span> <span style="color: #dcdcaa;">main</span>(String[] args) {
+        <span style="color: #4fc1ff;">Scanner</span> scanner = <span style="color: #569cd6;">new</span> <span style="color: #4fc1ff;">Scanner</span>(System.in);
+        System.out.println(<span style="color: #ce9178;">"Enter two numbers:"</span>);
+        
+        <span style="color: #569cd6;">double</span> num1 = scanner.nextDouble();
+        <span style="color: #569cd6;">double</span> num2 = scanner.nextDouble();
+        
+        System.out.println(<span style="color: #ce9178;">"Sum: "</span> + (num1 + num2));
+    }
+}</pre>
+      </div>
+
+      <div id="csharp" class="tab-content">
+<pre><span style="color: #6a9955;">// C# implementation of a simple web API</span>
+<span style="color: #569cd6;">using</span> Microsoft.AspNetCore.Mvc;
+
+<span style="color: #569cd6;">namespace</span> MyWebApi.Controllers
+{
+    [<span style="color: #4ec9b0;">ApiController</span>]
+    [<span style="color: #4ec9b0;">Route</span>(<span style="color: #ce9178;">"[controller]"</span>)]
+    <span style="color: #569cd6;">public class</span> <span style="color: #4ec9b0;">WeatherController</span> : ControllerBase
+    {
+        [<span style="color: #4ec9b0;">HttpGet</span>]
+        <span style="color: #569cd6;">public</span> ActionResult&lt;<span style="color: #569cd6;">string</span>&gt; Get() {
+            <span style="color: #569cd6;">return</span> <span style="color: #ce9178;">"Hello from C# Web API!"</span>;
+        }
+    }
+}</pre>
+      </div>
+
+      <div id="cpp" class="tab-content">
+<pre><span style="color: #6a9955;">// C++ implementation of a simple game loop</span>
+<span style="color: #569cd6;">#include</span> <span style="color: #ce9178;">&lt;iostream&gt;</span>
+<span style="color: #569cd6;">using namespace</span> std;
+
+<span style="color: #569cd6;">int</span> <span style="color: #dcdcaa;">main</span>() {
+    <span style="color: #569cd6;">bool</span> gameRunning = <span style="color: #569cd6;">true</span>;
+    <span style="color: #569cd6;">while</span>(gameRunning) {
+        cout &lt;&lt; <span style="color: #ce9178;">"Game is running..."</span> &lt;&lt; endl;
+        <span style="color: #6a9955;">// Game logic here</span>
+    }
+    <span style="color: #569cd6;">return</span> 0;
+}</pre>
+      </div>
+    </div>
+    
+    <h3>Other Technologies</h3>
+    <div class="skills-container">
+      <div class="skill-chip"><i class="fab fa-git-alt"></i> Git</div>
+      <div class="skill-chip"><i class="fas fa-database"></i> SQL</div>
+      <div class="skill-chip"><i class="fab fa-windows"></i> .NET</div>
+      <div class="skill-chip"><i class="fas fa-cloud"></i> Azure</div>
+      <div class="skill-chip"><i class="fas fa-terminal"></i> Bash</div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2><i class="fas fa-briefcase"></i> Professional Experience</h2>
+    
+    <div class="experience-item">
+      <h3>Executive Committee Member – NWU Chess Club <span class="tooltip">ℹ️<span class="tooltiptext">North West University Chess Club</span></span></h3>
+      <p><i class="far fa-calendar-alt"></i> Feb 2025 – Current</p>
+      <ul>
+        <li>Marketing of tournaments and design of promotional material</li>
+        <li>Organized the largest university chess tournament in the region</li>
+        <li>Increased club membership by 40% through targeted campaigns</li>
+      </ul>
+    </div>
+    
+    <div class="experience-item">
+      <h3>Chess Coach – Potchefstroom</h3>
+      <p><i class="far fa-calendar-alt"></i> Mar 2024 – Current</p>
+      <ul>
+        <li>Enhanced performance with personalized coaching</li>
+        <li>Developed critical thinking and supported tournament prep</li>
+        <li>Coached 3 students who achieved national rankings</li>
+      </ul>
+    </div>
+    
+    <div class="experience-item">
+      <h3>Intern – Squared Sports, Klerksdorp</h3>
+      <p><i class="far fa-calendar-alt"></i> Jun 2024</p>
+      <ul>
+        <li>Designed overlays for sports streams using graphic design tools</li>
+        <li>Explored new technology and solved problems collaboratively</li>
+        <li>Implemented automation scripts that reduced production time by 30%</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2><i class="fas fa-graduation-cap"></i> Education</h2>
+    <h3>BSc in Information Technology</h3>
+    <p><i class="fas fa-university"></i> North West University, Potchefstroom <span class="tooltip">ℹ️<span class="tooltiptext">Expected graduation: March 2026</span></span></p>
+    <p><i class="far fa-calendar-alt"></i> 2023 - 2026</p>
+    
+    <h3>Matriculated</h3>
+    <p><i class="fas fa-school"></i> Ferdinant Postma High School</p>
+    <p><i class="far fa-calendar-alt"></i> 2022</p>
+    <ul>
+      <li>Subjects: Afrikaans, English, Mathematics, Information Technology, CAT, Accounting</li>
+      <li>Achieved distinctions in Mathematics and Information Technology</li>
+    </ul>
+  </section>
+
+  <section class="section">
+    <h2><i class="fas fa-trophy"></i> Achievements</h2>
+    <div>
+      <span class="achievement-badge"><i class="fas fa-chess-knight"></i> Chess Champion</span>
+      <span class="achievement-badge"><i class="fas fa-code"></i> Coding Olympiad</span>
+      <span class="achievement-badge"><i class="fas fa-medal"></i> National Awards</span>
+      <span class="achievement-badge"><i class="fas fa-globe-africa"></i> International Rep</span>
+    </div>
+    
+    <ul>
+      <li>Represented South Africa at African Youth Chess Championship (Lusaka, Jul 2022)</li>
+      <li>Represented South Africa at African Schools Chess Championship (Nairobi, Dec 2021)</li>
+      <li>Silver award – National English Olympiad (2021)</li>
+      <li>Merit award – National English Olympiad (2022)</li>
+      <li>Bronze certificate – Computer Applications Olympiad (2022)</li>
+      <li>Qualified for second round – Programming Olympiad (2021)</li>
+      <li>Participated in Programming & Maths Olympiads (2021–2022)</li>
+      <li>Qualified for second round – Accounting Olympiad (2021)</li>
+    </ul>
+  </section>
+
+  <section class="section">
+    <h2><i class="fas fa-certificate"></i> Additional Training</h2>
+    <ul>
+      <li><strong>Foundations of Cybersecurity</strong> – Completed Apr 2024 <span class="tooltip">ℹ️<span class="tooltiptext">Covered network security, cryptography, and ethical hacking principles</span></span></li>
+      <li><strong>Quantum Computing and Programming Workshop</strong> – Jul 2023</li>
+      <li><strong>Internal Chess Coaching Course</strong> – Completed Jul 2025</li>
+      <li><strong>Web Development Bootcamp</strong> – Currently enrolled</li>
+    </ul>
+  </section>
+
+  <div class="floating-action-btn" id="scrollToTop">
+    <i class="fas fa-arrow-up"></i>
+  </div>
+
+  <script>
+    // Animate sections on scroll
+    function animateSections() {
+      const sections = document.querySelectorAll('.section');
+      
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate-section');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+      
+      sections.forEach(section => {
+        observer.observe(section);
+      });
+    }
+    
+    // Typing effect for title
+    function typeWriter(element, text, speed, callback) {
+      let i = 0;
+      element.innerHTML = '';
+      
+      function typing() {
+        if (i < text.length) {
+          element.innerHTML += text.charAt(i);
+          i++;
+          setTimeout(typing, speed);
+        } else if (callback) {
+          callback();
+        }
+      }
+      
+      typing();
+    }
+    
+    // Tab functionality
+    function setupTabs() {
+      const buttons = document.querySelectorAll(".tab-button");
+      const contents = document.querySelectorAll(".tab-content");
+      
+      buttons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          buttons.forEach(b => b.classList.remove("active"));
+          contents.forEach(c => c.classList.remove("active"));
+          btn.classList.add("active");
+          document.getElementById(btn.dataset.target).classList.add("active");
+        });
+      });
+    }
+    
+    // Dark/light mode toggle
+    function toggleMode() {
+      document.body.classList.toggle("dark-mode");
+      
+      // Save preference to localStorage
+      const isDarkMode = document.body.classList.contains('dark-mode');
+      localStorage.setItem('darkMode', isDarkMode);
+      
+      // Change icon
+      const modeButton = document.querySelector('.mode-toggle button');
+      if (isDarkMode) {
+        modeButton.innerHTML = '<i class="fas fa-sun"></i> Toggle Theme';
+      } else {
+        modeButton.innerHTML = '<i class="fas fa-moon"></i> Toggle Theme';
+      }
+    }
+    
+    // Progress bar animation
+    function animateProgressBars() {
+      const progressBars = document.querySelectorAll('.progress-bar');
+      
+      progressBars.forEach(bar => {
+        const width = bar.getAttribute('data-width');
+        bar.style.width = width;
+      });
+    }
+    
+    // Scroll to top button
+    function setupScrollToTop() {
+      const scrollToTopBtn = document.getElementById('scrollToTop');
+      
+      window.addEventListener('scroll', () => {
+        if (window.pageYOffset > 300) {
+          scrollToTopBtn.style.display = 'flex';
+        } else {
+          scrollToTopBtn.style.display = 'none';
+        }
+      });
+      
+      scrollToTopBtn.addEventListener('click', () => {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      });
+    }
+    
+    // Profile picture interaction
+    function setupProfilePic() {
+      const profilePic = document.getElementById('profilePic');
+      let isZoomed = false;
+      
+      profilePic.addEventListener('click', () => {
+        if (isZoomed) {
+          profilePic.style.transform = 'scale(1)';
+          profilePic.style.borderRadius = '50%';
+          profilePic.style.boxShadow = '0 0 20px rgba(106, 76, 147, 0.3)';
+        } else {
+          profilePic.style.transform = 'scale(1.5)';
+          profilePic.style.borderRadius = '10px';
+          profilePic.style.boxShadow = '0 0 30px rgba(106, 76, 147, 0.6)';
+        }
+        
+        isZoomed = !isZoomed;
+      });
+    }
+    
+    // Check for saved theme preference
+    function checkSavedTheme() {
+      const savedMode = localStorage.getItem('darkMode');
+      
+      if (savedMode === 'true') {
+        document.body.classList.add('dark-mode');
+        document.querySelector('.mode-toggle button').innerHTML = '<i class="fas fa-sun"></i> Toggle Theme';
+      }
+    }
+    
+    // Initialize everything when DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      animateSections();
+      setupTabs();
+      animateProgressBars();
+      setupScrollToTop();
+      setupProfilePic();
+      checkSavedTheme();
+      
+      // Typing effects
+      typeWriter(document.getElementById('typing-title'), 'Elzette Fourie', 100, () => {
+        typeWriter(document.getElementById('typing-subtitle'), 'BSc IT Student | Chess Enthusiast | Developer', 50);
+      });
+    });
+  </script>
+</body>
+</html>
